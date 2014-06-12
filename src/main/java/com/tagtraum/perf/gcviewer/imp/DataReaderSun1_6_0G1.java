@@ -417,8 +417,7 @@ public class DataReaderSun1_6_0G1 extends AbstractDataReaderSun {
         model.add(parseConcurrentEvent(line, pos, previousEvent.getDatestamp(), previousEvent.getTimestamp(), type));
     }
     
-    @Override
-    protected AbstractGCEvent<?> parseLine(final String line, final ParseInformation pos) throws ParseException {
+    private AbstractGCEvent<?> parseLine(final String line, final ParseInformation pos) throws ParseException {
         AbstractGCEvent<?> ae = null;
         try {
             // parse datestamp          "yyyy-MM-dd'T'hh:mm:ssZ:"

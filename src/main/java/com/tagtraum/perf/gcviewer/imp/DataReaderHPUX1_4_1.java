@@ -41,18 +41,18 @@ public class DataReaderHPUX1_4_1 implements DataReader {
         try {
             final GCModel model = new GCModel(true);
             model.setFormat(GCModel.Format.SUN_X_LOG_GC);
-            String line = null;
-            GCEvent event = null;
+            String line;
+            GCEvent event;
             while ((line = in.readLine()) != null) {
                 final StringTokenizer st = new StringTokenizer(line, " ");
-                if (st.countTokens() != 22) {
-                    if (LOG.isLoggable(Level.WARNING)) {
-                        LOG.warning("Malformed line (" + in.getLineNumber() + "). Wrong number of tokens ("+st.countTokens()+"): " + line);
-                        continue;
-                    }
+                if (st.countTokens() != 22 && LOG.isLoggable(Level.WARNING)) {
+                    LOG.warning("Malformed line (" + in.getLineNumber() + "). Wrong number of tokens (" + st.countTokens() + "): " + line);
+                    continue;
                 }
                 if (!"<GC:".equals(st.nextToken())) {
-                    if (LOG.isLoggable(Level.WARNING)) LOG.warning("Malformed line (" + in.getLineNumber() + "). Expected \"<GC:\" in " + line);
+                    if (LOG.isLoggable(Level.WARNING)) {
+                        LOG.warning("Malformed line (" + in.getLineNumber() + "). Expected \"<GC:\" in " + line);
+                    }
                     continue;
                 }
                 event = new GCEvent();
@@ -211,7 +211,7 @@ public class DataReaderHPUX1_4_1 implements DataReader {
             if (in != null)
                 try {
                     in.close();
-                } catch (IOException ioe) {
+                } catch (IOException ignored) {
                 }
             if (LOG.isLoggable(Level.INFO)) LOG.info("Reading done.");
         }

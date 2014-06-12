@@ -10,7 +10,6 @@ import java.io.UnsupportedEncodingException;
 import org.junit.Before;
 import org.junit.Test;
 
-import com.tagtraum.perf.gcviewer.model.AbstractGCEvent;
 import com.tagtraum.perf.gcviewer.model.GCEvent;
 import com.tagtraum.perf.gcviewer.model.GCModel;
 import com.tagtraum.perf.gcviewer.util.ParseInformation;
@@ -113,11 +112,6 @@ public class TestAbstractDataReaderSun {
         
         @Override
         public GCModel read() throws IOException {
-            return null;
-        }
-    
-        @Override
-        protected AbstractGCEvent<?> parseLine(String line, ParseInformation pos) throws ParseException {
             return null;
         }
 

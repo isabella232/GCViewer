@@ -32,14 +32,12 @@ public class UsedTenuredRenderer extends PolygonChartRenderer {
         for (Iterator<GCEvent> i = model.getGCEvents(); i.hasNext();) {
             GCEvent event = i.next();
             GCEvent tenuredEvent = event.getTenured();
-            if (tenuredEvent != null) {
-                // only -XX:+PrintGCDetails adds information about generations
-                // e.g. "GC remark" of G1 algorithm does not contain memory information
-                if (tenuredEvent.getTotal() > 0) {
-                    final double timestamp = event.getTimestamp() - model.getFirstPauseTimeStamp();
-                    polygon.addPoint(timestamp, tenuredEvent.getPreUsed());
-                    polygon.addPoint(timestamp + event.getPause(), tenuredEvent.getPostUsed());
-                }
+            // only -XX:+PrintGCDetails adds information about generations
+            // e.g. "GC remark" of G1 algorithm does not contain memory information
+            if (tenuredEvent != null && tenuredEvent.getTotal() > 0) {
+                final double timestamp = event.getTimestamp() - model.getFirstPauseTimeStamp();
+                polygon.addPoint(timestamp, tenuredEvent.getPreUsed());
+                polygon.addPoint(timestamp + event.getPause(), tenuredEvent.getPostUsed());
             }
         }
         // dummy point to make the polygon complete

@@ -1,4 +1,5 @@
 /.settings
+/build/
 /target
 /dependometer
 /src/nbproject
@@ -11,3 +12,4 @@
 /*.txt
 /*.iml
 /.idea/
+/.gradle/

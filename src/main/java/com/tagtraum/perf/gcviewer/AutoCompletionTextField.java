@@ -24,11 +24,11 @@ public class AutoCompletionTextField extends JTextField implements ComboBoxEdito
 
     private RecentURLsModel recentURLsModel;
     private AutoCompletionComboBoxModel comboBoxModel;
-    private List suggestions;
+    private List<String> suggestions;
 
     public AutoCompletionTextField() {
         super();
-        this.suggestions = new ArrayList();
+        this.suggestions = new ArrayList<>();
         this.comboBoxModel = new AutoCompletionComboBoxModel();
         setDocument(createDefaultModel());
         this.recentURLsModel = new RecentURLsModel();
@@ -57,11 +57,11 @@ public class AutoCompletionTextField extends JTextField implements ComboBoxEdito
         return new PlainDocument() {
             public void insertString(int offs, String str, AttributeSet a) throws BadLocationException {
                 final String text = this.getText(0, offs) + str;
-                List oldSuggestions = suggestions;
+                List<String> oldSuggestions = suggestions;
                 suggestions = recentURLsModel.getURLsStartingWith(text);
                 String appendString = "";
                 if (!suggestions.isEmpty()) {
-                    final String suggestion = (String)suggestions.get(0);
+                    final String suggestion = suggestions.get(0);
                     appendString = suggestion.substring(text.length());
                 }
                 super.insertString(offs, str+appendString, a);
@@ -75,7 +75,7 @@ public class AutoCompletionTextField extends JTextField implements ComboBoxEdito
 
             public void remove(int offs, int len) throws BadLocationException {
                 super.remove(offs, len);
-                final List oldSuggestions = suggestions;
+                final List<String> oldSuggestions = suggestions;
                 suggestions = recentURLsModel.getURLsStartingWith(AutoCompletionTextField.this.getText());
                 if (!oldSuggestions.equals(suggestions)) {
                     comboBoxModel.fireContentsChanged();
@@ -87,11 +87,11 @@ public class AutoCompletionTextField extends JTextField implements ComboBoxEdito
 
     private class AutoCompletionComboBoxModel implements ComboBoxModel {
 
-        private List listDataListeners;
+        private List<ListDataListener> listDataListeners;
         private Object selected;
 
         public AutoCompletionComboBoxModel() {
-            this.listDataListeners = new ArrayList();
+            this.listDataListeners = new ArrayList<>();
         }
 
         public void setSelectedItem(Object anItem) {
@@ -119,8 +119,8 @@ public class AutoCompletionTextField extends JTextField implements ComboBoxEdito
         }
 
         private void fireContentsChanged() {
-            for (int i=0; i<listDataListeners.size(); i++) {
-                ((ListDataListener)listDataListeners.get(i)).contentsChanged(new ListDataEvent(this, ListDataEvent.CONTENTS_CHANGED, 0, getSize()-1));
+            for (ListDataListener listDataListener : listDataListeners) {
+                listDataListener.contentsChanged(new ListDataEvent(this, ListDataEvent.CONTENTS_CHANGED, 0, getSize() - 1));
             }
         }
 

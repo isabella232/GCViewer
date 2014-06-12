@@ -155,11 +155,8 @@ public class OSXSupport {
     public static boolean isOSX() {
         String osName = System.getProperty("os.name");
 
-        if ( ! osName.startsWith("Mac OS X")) {
-            return false;
-        }
+        return osName.startsWith("Mac OS X");
 
-        return true;
     }
 
     /**
@@ -191,15 +188,11 @@ public class OSXSupport {
         try {
             int minorVers = Integer.parseInt(fragments[1]);
             String[] updateFragments = fragments[2].split("_");
-            if (minorVers == 5) {
-                if (Integer.parseInt(updateFragments[1]) >= 26) {
-                    return true;
-                }
+            if (minorVers == 5 && Integer.parseInt(updateFragments[1]) >= 26) {
+                return true;
             }
-            if (minorVers == 6) {
-                if (Integer.parseInt(updateFragments[1]) >= 22) {
-                    return true;
-                }
+            if (minorVers == 6 && Integer.parseInt(updateFragments[1]) >= 22) {
+                return true;
             }
             if (minorVers >= 7) {
                 return true;
@@ -241,10 +234,8 @@ public class OSXSupport {
         try {
             int minorVers = Integer.parseInt(fragments[1]);
             String[] updateFragments = fragments[2].split("_");
-            if (minorVers == 6) {
-                if (Integer.parseInt(updateFragments[1]) >= 29) {
-                    return true;
-                }
+            if (minorVers == 6 && Integer.parseInt(updateFragments[1]) >= 29) {
+                return true;
             }
             if (minorVers >= 7) {
                 return true;

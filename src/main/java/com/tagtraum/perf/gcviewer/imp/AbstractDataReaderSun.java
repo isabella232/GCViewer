@@ -433,8 +433,6 @@ public abstract class AbstractDataReaderSun implements DataReader {
         }
         return timestamp;
     }
-    
-    protected abstract AbstractGCEvent<?> parseLine(String line, ParseInformation pos) throws ParseException;
 
     /**
      * Tests if <code>line</code> starts with one of the strings in <code>lineStartStrings</code>.
@@ -494,7 +492,7 @@ public abstract class AbstractDataReaderSun implements DataReader {
         if (line == null || line.length() < 10) {
             return false;
         }
-    
+
         return line.indexOf("-", pos.getIndex()) == pos.getIndex()+4 && line.indexOf("-", pos.getIndex() + 5) == pos.getIndex()+7;
     }
 
@@ -542,13 +540,10 @@ public abstract class AbstractDataReaderSun implements DataReader {
                 }
                 event.add(detailEvent);
             } 
-            catch (UnknownGcTypeException e) {
-                skipUntilEndOfDetail(line, pos, e);
-            } 
-            catch (NumberFormatException e) {
+            catch (UnknownGcTypeException | NumberFormatException e) {
                 skipUntilEndOfDetail(line, pos, e);
             }
-            
+
             // promotion failed indicators "--" are sometimes separated from their primary
             // event name -> stick them together here (they are part of the "parent" event)
             if (nextIsPromotionFailed(line, pos)) {
@@ -603,12 +598,10 @@ public abstract class AbstractDataReaderSun implements DataReader {
             pos.setLineNumber(lineNumber);
             // for now just skip those lines
             startsWithString = startsWith(line, lineStartStrings, true);
-            if (startsWithString) {
-                // don't mark any more if line didn't match -> it is the first line that
-                // is of interest after the skipped block
-                if (in.markSupported()) {
-                    in.mark(200);
-                }
+            // don't mark any more if line didn't match -> it is the first line that
+            // is of interest after the skipped block
+            if (startsWithString && in.markSupported()) {
+                in.mark(200);
             }
         }
         

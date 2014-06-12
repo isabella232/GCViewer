@@ -69,7 +69,7 @@ public class DataReaderSun1_3_1 extends AbstractDataReaderSun implements DataRea
         }
     }
 
-    protected AbstractGCEvent<GCEvent> parseLine(String line, ParseInformation pos) throws ParseException {
+    private AbstractGCEvent<GCEvent> parseLine(String line, ParseInformation pos) throws ParseException {
         AbstractGCEvent<GCEvent> event = new GCEvent();
         try {
             event.setTimestamp(count);

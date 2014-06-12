@@ -1,0 +1,34 @@
+/* FINDBUGS */
+apply plugin: 'findbugs'
+
+findbugs {
+    toolVersion = "2.0.3"
+}
+
+tasks.withType(FindBugs) {
+    // Allow the build to continue if there are findbugs warnings.
+    ignoreFailures = true
+}
+
+
+/* PMD */
+apply plugin: 'pmd'
+
+tasks.withType(Pmd) {
+    // Allow the build to continue if there are pmd warnings.
+    ignoreFailures = true
+}
+
+
+/* JACOCO */
+apply plugin: 'jacoco'
+
+jacoco {
+    toolVersion = "0.7.0.201403182114"  // needed for java 8
+}
+
+jacocoTestReport {
+    group = "reporting"
+    description = "Generate Jacoco coverage reports after running tests."
+    additionalSourceDirs = files(sourceSets.main.allJava.srcDirs)
+}
