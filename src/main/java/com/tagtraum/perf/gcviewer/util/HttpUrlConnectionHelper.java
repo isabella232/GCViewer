@@ -56,7 +56,7 @@ public class HttpUrlConnectionHelper {
                 in = checkContentDecodingForInputStream(in, contentEncoding);
             } 
             catch(IOException e) {
-                LOGGER.log(Level.FINE, contentEncoding + " read failed; try plain reading", e);;                        
+                LOGGER.log(Level.FINE, contentEncoding + " read failed; try plain reading", e);
             }
             // extract charset from content-type header
             // e.g. Content-Type: text/html; charset=ISO-8859-4
@@ -96,8 +96,8 @@ public class HttpUrlConnectionHelper {
     /**
      *  Sets request properties, connects and opens the input stream depending on the HTTP response.
      *  
-     *  @param conn            The HTTP connection
-     *  @param acceptEncoding  Content-encoding (gzip,defate or null)
+     *  @param httpConn        The HTTP connection
+     *  @param acceptEncoding  Content-encoding (gzip, defate or null)
      *  @return The input stream
      */
     public static InputStream openInputStream(final HttpURLConnection httpConn, 

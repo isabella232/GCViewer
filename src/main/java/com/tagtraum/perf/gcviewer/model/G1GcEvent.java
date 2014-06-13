@@ -15,7 +15,6 @@ public class G1GcEvent extends GCEvent {
         return getExtendedType().getName();
     }
 
-    @Override
     public void toStringBuffer(StringBuffer sb) {
         super.toStringBuffer(sb);
     }

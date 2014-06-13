@@ -1,34 +1,17 @@
 package com.tagtraum.perf.gcviewer;
 
-import java.awt.Color;
-import java.awt.GradientPaint;
-import java.awt.Graphics;
-import java.awt.Graphics2D;
-import java.awt.GridBagConstraints;
-import java.awt.GridBagLayout;
-import java.awt.Insets;
-import java.awt.Toolkit;
+import com.tagtraum.perf.gcviewer.imp.DataReaderException;
+import com.tagtraum.perf.gcviewer.imp.DataReaderFacade;
+import com.tagtraum.perf.gcviewer.model.GCModel;
+import com.tagtraum.perf.gcviewer.util.LocalisationHelper;
+
+import javax.swing.*;
+import javax.swing.event.SwingPropertyChangeSupport;
+import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.beans.PropertyChangeListener;
 import java.net.URL;
-
-import javax.swing.ImageIcon;
-import javax.swing.JButton;
-import javax.swing.JLabel;
-import javax.swing.JPanel;
-import javax.swing.JScrollBar;
-import javax.swing.JScrollPane;
-import javax.swing.JTabbedPane;
-import javax.swing.JTextArea;
-import javax.swing.SwingConstants;
-import javax.swing.event.SwingPropertyChangeSupport;
-
-import com.tagtraum.perf.gcviewer.imp.DataReaderException;
-import com.tagtraum.perf.gcviewer.imp.DataReaderFacade;
-import com.tagtraum.perf.gcviewer.log.TextAreaLogHandler;
-import com.tagtraum.perf.gcviewer.model.GCModel;
-import com.tagtraum.perf.gcviewer.util.LocalisationHelper;
 
 
 /**
@@ -51,11 +34,9 @@ public class ChartPanelView {
     private JTabbedPane modelChartAndDetailsPanel;
     private GCModel model;
     private ViewBar viewBar;
-    private boolean viewBarVisible;
     private boolean minimized;
     private SwingPropertyChangeSupport propertyChangeSupport;
     private GCDocument gcDocument;
-    private TextAreaLogHandler textAreaLogHandler;
     private DataReaderFacade dataReaderFacade;
     
     public ChartPanelView(GCDocument gcDocument, URL url) throws DataReaderException {
@@ -80,7 +61,6 @@ public class ChartPanelView {
         
         this.viewBar = new ViewBar(this);
         this.propertyChangeSupport = new SwingPropertyChangeSupport(this);
-        this.textAreaLogHandler = new TextAreaLogHandler();
         dataReaderFacade = new DataReaderFacade();
         final GCModel model = dataReaderFacade.loadModel(url, true, gcDocument);
         setModel(model);
@@ -105,30 +85,12 @@ public class ChartPanelView {
         return false;
     }
 
-    public void invalidate() {
-        modelChart.invalidate();
-        modelPanel.invalidate();
-        modelDetailsPanel.invalidate();
-    }
-
     public void addPropertyChangeListener(PropertyChangeListener propertyChangeListener) {
         propertyChangeSupport.addPropertyChangeListener(propertyChangeListener);
     }
 
     public ViewBar getViewBar() {
         return viewBar;
-    }
-
-    public JTextArea getParseLog() {
-        return textAreaLogHandler.getTextArea();
-    }
-
-    public boolean isViewBarVisible() {
-        return viewBarVisible;
-    }
-
-    public void setViewBarVisible(boolean viewBarVisible) {
-        this.viewBarVisible = viewBarVisible;
     }
 
     public boolean isMinimized() {

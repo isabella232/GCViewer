@@ -144,7 +144,6 @@ public class ModelChartImpl extends JScrollPane implements ModelChart, ChangeLis
         final JPopupMenu popupMenu = new JPopupMenu();
         timeOffsetPanel = new TimeOffsetPanel(popupMenu);
         popupMenu.add(timeOffsetPanel);
-        final JPopupMenu timestampRulerPopup = popupMenu;
         Action setOffsetAction = new AbstractAction() {
             public void actionPerformed(ActionEvent e) {
                 if (timeOffsetPanel.isOffsetSet()) timestampRuler.setOffset(timeOffsetPanel.getDate().getTime()/1000);
@@ -181,16 +180,12 @@ public class ModelChartImpl extends JScrollPane implements ModelChart, ChangeLis
                         timeOffsetPanel.setDate(new Date(suggestedStartDate));
                         timeOffsetPanel.setOffsetSet(false);
                     }
-                    timestampRulerPopup.show(e.getComponent(), e.getX(),  e.getY());
+                    popupMenu.show(e.getComponent(), e.getX(), e.getY());
                     timeOffsetPanel.requestFocus();
                 }
             }
         });
 
-    }
-
-    public void invalidate() {
-        super.invalidate();
     }
 
     /**
@@ -510,7 +505,7 @@ public class ModelChartImpl extends JScrollPane implements ModelChart, ChangeLis
             //System.out.println("longest: " + longestString);
             configureFormatter();
             int minWidth = fm.stringWidth(longestString) + 5;
-            Dimension bestSize = null;
+            Dimension bestSize;
             if (isVertical()) {
                 bestSize = new Dimension(minWidth, getHeight());
             } else {
@@ -643,8 +638,7 @@ public class ModelChartImpl extends JScrollPane implements ModelChart, ChangeLis
         }
 
         private double getPixelsPerUnit() {
-            double pixelPerUnit = (isVertical()?getHeight()/(maxUnit - minUnit):(runningTime * getScaleFactor() / (maxUnit - minUnit)));
-            return pixelPerUnit;
+            return isVertical()?getHeight()/ (maxUnit - minUnit) : runningTime * getScaleFactor() / (maxUnit - minUnit);
         }
 
         public void setMinUnit(double minUnit) {
