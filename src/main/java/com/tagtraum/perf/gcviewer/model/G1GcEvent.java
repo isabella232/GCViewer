@@ -15,8 +15,4 @@ public class G1GcEvent extends GCEvent {
         return getExtendedType().getName();
     }
 
-    public void toStringBuffer(StringBuffer sb) {
-        super.toStringBuffer(sb);
-    }
-
 }

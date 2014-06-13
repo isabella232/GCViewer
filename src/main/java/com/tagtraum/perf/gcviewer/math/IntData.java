@@ -74,13 +74,4 @@ public class IntData implements Serializable  {
         n = 0;
     }
 
-    public static long weightedAverage(long[] n, int[] weight) {
-        long sum = 0;
-        int m = 0;
-        for (int i=0; i<n.length; i++) {
-            sum += n[i]*weight[i];
-            m += weight[i];
-        }
-        return sum / m;
-    }
 }

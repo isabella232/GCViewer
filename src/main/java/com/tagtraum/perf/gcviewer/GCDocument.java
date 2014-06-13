@@ -43,7 +43,7 @@ import com.tagtraum.perf.gcviewer.imp.DataReaderException;
  */
 public class GCDocument extends JInternalFrame {
 
-    private List<ChartPanelView> chartPanelViews = new ArrayList<ChartPanelView>();
+    private List<ChartPanelView> chartPanelViews = new ArrayList<>();
     private ModelChart modelChartListFacade;
     private boolean showModelPanel = true;
     private boolean watched;
@@ -92,12 +92,9 @@ public class GCDocument extends JInternalFrame {
                     } else {
                         e.rejectDrop();
                     }
-                } catch (IOException ioe) {
+                } catch (IOException | UnsupportedFlavorException ioe) {
                     e.rejectDrop();
                     ioe.printStackTrace();
-                } catch (UnsupportedFlavorException ufe) {
-                    e.rejectDrop();
-                    ufe.printStackTrace();
                 }
             }
         }));
@@ -239,9 +236,9 @@ public class GCDocument extends JInternalFrame {
                 final JScrollBar horizontalScrollBar = modelChart.getHorizontalScrollBar();
                 // clean old change listeners
                 ChangeListener[] changeListeners = ((DefaultBoundedRangeModel) horizontalScrollBar.getModel()).getChangeListeners();
-                for (int j = 0; j < changeListeners.length; j++) {
-                    if (changeListeners[j] instanceof ScrollBarMaximumChangeListener) {
-                        horizontalScrollBar.getModel().removeChangeListener(changeListeners[j]);
+                for (ChangeListener changeListener : changeListeners) {
+                    if (changeListener instanceof ScrollBarMaximumChangeListener) {
+                        horizontalScrollBar.getModel().removeChangeListener(changeListener);
                     }
                 }
                 if (isLastMaximizedChartPanelView && isWatched()) {
@@ -268,9 +265,9 @@ public class GCDocument extends JInternalFrame {
 
     private void lockChartsToOneScrollbar(final JViewport viewport, final boolean lastMaximizedChartPanelView, final ModelChartImpl modelChart, MasterViewPortChangeListener masterViewPortChangeListener) {
         ChangeListener[] changeListeners = viewport.getChangeListeners();
-        for (int j = 0; j < changeListeners.length; j++) {
-            if (changeListeners[j] instanceof MasterViewPortChangeListener) {
-                viewport.removeChangeListener(changeListeners[j]);
+        for (ChangeListener changeListener : changeListeners) {
+            if (changeListener instanceof MasterViewPortChangeListener) {
+                viewport.removeChangeListener(changeListener);
             }
         }
         if (lastMaximizedChartPanelView) {
@@ -305,7 +302,7 @@ public class GCDocument extends JInternalFrame {
     }
 
     private static class MasterViewPortChangeListener implements ChangeListener {
-        private List<JViewport> slaveViewPorts = new ArrayList<JViewport>();
+        private List<JViewport> slaveViewPorts = new ArrayList<>();
 
         public void addSlaveViewport(JViewport viewPort) {
             slaveViewPorts.add(viewPort);
@@ -322,16 +319,14 @@ public class GCDocument extends JInternalFrame {
 
     public ChartPanelView getLastMaximizedChartPanelView() {
         ChartPanelView lastMaximizedChartPanelView = null;
-        for (int i = 0; i < chartPanelViews.size(); i++) {
-            final ChartPanelView chartPanelView = chartPanelViews.get(i);
+        for (final ChartPanelView chartPanelView : chartPanelViews) {
             if (!chartPanelView.isMinimized()) lastMaximizedChartPanelView = chartPanelView;
         }
         return lastMaximizedChartPanelView;
     }
 
     private void scaleModelChart() {
-        for (int i = 0; i < chartPanelViews.size(); i++) {
-            final ChartPanelView aChartPanelView = (chartPanelViews.get(i));
+        for (final ChartPanelView aChartPanelView : chartPanelViews) {
             aChartPanelView.getModelChart().setFootprint(getMaxFootprint());
             aChartPanelView.getModelChart().setMaxPause(getMaxMaxPause());
             aChartPanelView.getModelChart().setRunningTime(getMaxRunningTime());
@@ -340,24 +335,24 @@ public class GCDocument extends JInternalFrame {
 
     private double getMaxRunningTime() {
         double max = 0;
-        for (int i = 0; i < chartPanelViews.size(); i++) {
-            max = Math.max(max, chartPanelViews.get(i).getModel().getRunningTime());
+        for (ChartPanelView chartPanelView : chartPanelViews) {
+            max = Math.max(max, chartPanelView.getModel().getRunningTime());
         }
         return max;
     }
 
     private long getMaxFootprint() {
         long max = 0;
-        for (int i = 0; i < chartPanelViews.size(); i++) {
-            max = Math.max(max, chartPanelViews.get(i).getModel().getFootprint());
+        for (ChartPanelView chartPanelView : chartPanelViews) {
+            max = Math.max(max, chartPanelView.getModel().getFootprint());
         }
         return max;
     }
 
     private double getMaxMaxPause() {
         double max = 0;
-        for (int i = 0; i < chartPanelViews.size(); i++) {
-            max = Math.max(max, chartPanelViews.get(i).getModel().getPause().getMax());
+        for (ChartPanelView chartPanelView : chartPanelViews) {
+            max = Math.max(max, chartPanelView.getModel().getPause().getMax());
         }
         return max;
     }
@@ -367,8 +362,7 @@ public class GCDocument extends JInternalFrame {
 
         @Override
         public boolean isAntiAlias() {
-            if (chartPanelViews.isEmpty()) return false;
-            return chartPanelViews.get(0).getModelChart().isAntiAlias();
+            return !chartPanelViews.isEmpty() && chartPanelViews.get(0).getModelChart().isAntiAlias();
         }
 
         @Override
@@ -426,8 +420,7 @@ public class GCDocument extends JInternalFrame {
 
         @Override
         public boolean isShowGCTimesLine() {
-            if (chartPanelViews.isEmpty()) return false;
-            return chartPanelViews.get(0).getModelChart().isShowGCTimesLine();
+            return !chartPanelViews.isEmpty() && chartPanelViews.get(0).getModelChart().isShowGCTimesLine();
         }
 
         @Override
@@ -439,8 +432,7 @@ public class GCDocument extends JInternalFrame {
 
         @Override
         public boolean isShowGCTimesRectangles() {
-            if (chartPanelViews.isEmpty()) return false;
-            return chartPanelViews.get(0).getModelChart().isShowGCTimesRectangles();
+            return !chartPanelViews.isEmpty() && chartPanelViews.get(0).getModelChart().isShowGCTimesRectangles();
         }
 
         @Override
@@ -452,8 +444,7 @@ public class GCDocument extends JInternalFrame {
 
         @Override
         public boolean isShowFullGCLines() {
-            if (chartPanelViews.isEmpty()) return false;
-            return chartPanelViews.get(0).getModelChart().isShowFullGCLines();
+            return !chartPanelViews.isEmpty() && chartPanelViews.get(0).getModelChart().isShowFullGCLines();
         }
 
         @Override
@@ -465,8 +456,7 @@ public class GCDocument extends JInternalFrame {
 
         @Override
         public boolean isShowIncGCLines() {
-            if (chartPanelViews.isEmpty()) return false;
-            return chartPanelViews.get(0).getModelChart().isShowIncGCLines();
+            return !chartPanelViews.isEmpty() && chartPanelViews.get(0).getModelChart().isShowIncGCLines();
         }
 
         @Override
@@ -478,8 +468,7 @@ public class GCDocument extends JInternalFrame {
 
         @Override
         public boolean isShowTotalMemoryLine() {
-            if (chartPanelViews.isEmpty()) return false;
-            return chartPanelViews.get(0).getModelChart().isShowTotalMemoryLine();
+            return !chartPanelViews.isEmpty() && chartPanelViews.get(0).getModelChart().isShowTotalMemoryLine();
         }
 
         @Override
@@ -498,8 +487,7 @@ public class GCDocument extends JInternalFrame {
 
         @Override
         public boolean isShowTenured() {
-            if (chartPanelViews.isEmpty()) return false;
-            return chartPanelViews.get(0).getModelChart().isShowTenured();
+            return !chartPanelViews.isEmpty() && chartPanelViews.get(0).getModelChart().isShowTenured();
         }
 
         @Override
@@ -511,14 +499,12 @@ public class GCDocument extends JInternalFrame {
 
         @Override
         public boolean isShowYoung() {
-            if (chartPanelViews.isEmpty()) return false;
-            return chartPanelViews.get(0).getModelChart().isShowYoung();
+            return !chartPanelViews.isEmpty() && chartPanelViews.get(0).getModelChart().isShowYoung();
         }
 
         @Override
         public boolean isShowUsedMemoryLine() {
-            if (chartPanelViews.isEmpty()) return false;
-            return chartPanelViews.get(0).getModelChart().isShowUsedMemoryLine();
+            return !chartPanelViews.isEmpty() && chartPanelViews.get(0).getModelChart().isShowUsedMemoryLine();
         }
 
         @Override
@@ -530,8 +516,7 @@ public class GCDocument extends JInternalFrame {
 
         @Override
         public boolean isShowUsedTenuredMemoryLine() {
-            if (chartPanelViews.isEmpty()) return false;
-            return chartPanelViews.get(0).getModelChart().isShowUsedTenuredMemoryLine();
+            return !chartPanelViews.isEmpty() && chartPanelViews.get(0).getModelChart().isShowUsedTenuredMemoryLine();
         }
 
         @Override
@@ -543,8 +528,7 @@ public class GCDocument extends JInternalFrame {
 
         @Override
         public boolean isShowUsedYoungMemoryLine() {
-            if (chartPanelViews.isEmpty()) return false;
-            return chartPanelViews.get(0).getModelChart().isShowUsedYoungMemoryLine();
+            return !chartPanelViews.isEmpty() && chartPanelViews.get(0).getModelChart().isShowUsedYoungMemoryLine();
         }
 
         @Override
@@ -563,8 +547,7 @@ public class GCDocument extends JInternalFrame {
 
         @Override
         public boolean isShowInitialMarkLevel() {
-            if (chartPanelViews.isEmpty()) return false;
-            return chartPanelViews.get(0).getModelChart().isShowInitialMarkLevel();
+            return !chartPanelViews.isEmpty() && chartPanelViews.get(0).getModelChart().isShowInitialMarkLevel();
         }
 
         @Override
@@ -576,8 +559,7 @@ public class GCDocument extends JInternalFrame {
 
         @Override
         public boolean isShowConcurrentCollectionBeginEnd() {
-            if (chartPanelViews.isEmpty()) return false;
-            return chartPanelViews.get(0).getModelChart().isShowConcurrentCollectionBeginEnd();
+            return !chartPanelViews.isEmpty() && chartPanelViews.get(0).getModelChart().isShowConcurrentCollectionBeginEnd();
         }
 
         @Override
@@ -596,8 +578,7 @@ public class GCDocument extends JInternalFrame {
 
         @Override
         public boolean isShowDateStamp() {
-            if (chartPanelViews.isEmpty()) return false;
-            return chartPanelViews.get(0).getModelChart().isShowDateStamp();
+            return !chartPanelViews.isEmpty() && chartPanelViews.get(0).getModelChart().isShowDateStamp();
 
         }
     }
