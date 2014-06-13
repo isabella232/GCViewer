@@ -61,7 +61,6 @@ public class IBMJ9SAXHandler extends DefaultHandler {
         try {
             // System.out.println("START: [" + qName + "]");
             if (currentAF == null) {
-
                 if ("af".equals(qName)) {
                     currentAF = new AF();
                     String type = attrs.getValue("type");
@@ -85,30 +84,20 @@ public class IBMJ9SAXHandler extends DefaultHandler {
 
                 }
             } 
-            else if (currentAF != null) {
-                if ("time".equals(qName)) {
-                    // String pauseStr = attrs.getValue("exclusiveaccessms");
-                    // double pause = -1D;
-                    // if(pauseStr != null){
-                    // pause = NumberParser.parseDouble(pauseStr);
-                    // currentAF.totalTime = pause/1000;
-                    // }
-
+            else {
+                if (qName.equals("time")) {
                     String totalStr = attrs.getValue("totalms");
-                    double total = -1D;
+                    double total;
                     if (totalStr != null) {
                         total = NumberParser.parseDouble(totalStr);
                         currentAF.totalTime = total / 1000;
                     }
+                } else if (qName.equals("gc")) {
+                    currentAF.gcType = attrs.getValue("type");
 
-                } 
-                else if ("gc".equals(qName)) {
-                    String type = attrs.getValue("type");
-                    currentAF.gcType = type;
-                } 
-                else if ("timesms".equals(qName)) {
+                } else if (qName.equals("timesms")) {
                     String markStr = attrs.getValue("mark");
-                    double mark = -1D;
+                    double mark;
                     if (markStr != null) {
                         mark = NumberParser.parseDouble(markStr);
                         currentAF.gcTimeMark = mark;
@@ -116,11 +105,10 @@ public class IBMJ9SAXHandler extends DefaultHandler {
                     String sweepStr = attrs.getValue("sweep");
                     double sweep = -1D;
                     if (sweepStr != null) {
-                        mark = NumberParser.parseDouble(sweepStr);
                         currentAF.gcTimeSweep = sweep;
                     }
-                }
-                else if ("tenured".equals(qName)) {
+
+                } else if (qName.equals("tenured")) {
                     currentTenured++;
                     String freeStr = attrs.getValue("freebytes");
                     long free = -1;
@@ -132,25 +120,18 @@ public class IBMJ9SAXHandler extends DefaultHandler {
                     if (totalStr != null) {
                         total = Long.parseLong(totalStr);
                     }
-
-                    // For now only care about Total - don't break into SOA and
-                    // LOA
                     if (currentTenured == 1) {
                         currentAF.initialFreeBytes = free;
                         currentAF.initialTotalBytes = total;
-                    } 
-                    else if (currentTenured == 2) {
+                    } else if (currentTenured == 2) {
                         // ignore
-                    }
-                    else if (currentTenured == 3) {
+                    } else if (currentTenured == 3) {
                         currentAF.afterFreeBytes = free;
                         currentAF.afterTotalBytes = total;
-                    } 
-                    else {
+                    } else {
                         LOG.warning("currentTenured is > 3!");
                     }
-                }
-                else if ("soa".equals(qName)) {
+                } else if (qName.equals("soa")) {
                     String freeStr = attrs.getValue("freebytes");
                     long free = -1;
                     if (freeStr != null) {
@@ -161,23 +142,18 @@ public class IBMJ9SAXHandler extends DefaultHandler {
                     if (totalStr != null) {
                         total = Long.parseLong(totalStr);
                     }
-
                     if (currentTenured == 1) {
                         currentAF.initialSOAFreeBytes = free;
                         currentAF.initialSOATotalBytes = total;
-                    }
-                    else if (currentTenured == 2) {
+                    } else if (currentTenured == 2) {
                         // ignore
-                    }
-                    else if (currentTenured == 3) {
+                    } else if (currentTenured == 3) {
                         currentAF.afterSOAFreeBytes = free;
                         currentAF.afterSOATotalBytes = total;
-                    }
-                    else {
+                    } else {
                         LOG.warning("currentTenured is > 3!");
                     }
-                } 
-                else if ("loa".equals(qName)) {
+                } else if (qName.equals("loa")) {
                     String freeStr = attrs.getValue("freebytes");
                     long free = -1;
                     if (freeStr != null) {
@@ -188,19 +164,15 @@ public class IBMJ9SAXHandler extends DefaultHandler {
                     if (totalStr != null) {
                         total = Long.parseLong(totalStr);
                     }
-
                     if (currentTenured == 1) {
                         currentAF.initialLOAFreeBytes = free;
                         currentAF.initialLOATotalBytes = total;
-                    } 
-                    else if (currentTenured == 2) {
+                    } else if (currentTenured == 2) {
                         // ignore
-                    } 
-                    else if (currentTenured == 3) {
+                    } else if (currentTenured == 3) {
                         currentAF.afterLOAFreeBytes = free;
                         currentAF.afterLOATotalBytes = total;
-                    } 
-                    else {
+                    } else {
                         LOG.warning("currentTenured is > 3!");
                     }
                 }
@@ -300,9 +272,6 @@ class AF {
     String id;
     Date timestamp;
     long elapsedTime;
-    double intervalms = -1;
-    long minRequestedBytes = -1;
-    double timeExclusiveAccessMs = -1;
     long initialFreeBytes = -1;
     long initialTotalBytes = -1;
     long initialSOAFreeBytes = -1;
@@ -316,14 +285,8 @@ class AF {
     long afterLOAFreeBytes = -1;
     long afterLOATotalBytes = -1;
     String gcType;
-    double gcIntervalms = -1;
-    int gcSoftRefsCleared = -1;
-    int gcWeakRefsCleared = -1;
-    int gcPhantomRefsCleared = -1;
     double gcTimeMark = -1;
     double gcTimeSweep = -1;
-    double gcTimeCompact = -1;
-    double gcTime = -1;
     double totalTime = -1;
 
     public int getPreUsedInKb() {
